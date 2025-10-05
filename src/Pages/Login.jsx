@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom'
 const Login = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
-    redgNo : "",
-    password : ""
+    redgNo : localStorage.getItem("redgNo") || "",
+    password : localStorage.getItem("password") || ""
   })
   const handleOnChange = (e) => {
     const {name, value} = e.target;

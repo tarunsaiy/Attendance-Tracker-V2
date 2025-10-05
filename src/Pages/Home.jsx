@@ -68,8 +68,6 @@ const Home = () => {
     holidaysArray = data.holidays.map(d => d.getDate());
     const result = attendenceCalculator(holidaysArray, leavesArray, 28, data.present, data.held, today.getDate(), sundayArray, 7)
     setAttendanceArray(result)
-    console.log(leavesArray)
-    console.log(holidaysArray)
   }
   const handleReset = () => {
     setData(prev => ({
@@ -77,6 +75,7 @@ const Home = () => {
       leaves: [],
       holidays: []
     }));
+    setAttendanceArray([])
   }
 
   const redgNo = localStorage.getItem("redgNo");
@@ -219,28 +218,29 @@ const Home = () => {
               <button type='submit' className='cursor-pointer bg-orange-400 rounded py-1 font-semibold text-sm mt-4 hover:bg-orange-500'>
                 Submit
               </button>
-              <button onClick={handleReset} className='cursor-pointer bg-orange-400 rounded py-1 font-semibold text-sm mt-4 hover:bg-orange-500'>
+              <button type='button' onClick={handleReset} className='cursor-pointer bg-orange-400 rounded py-1 font-semibold text-sm mt-4 hover:bg-orange-500'>
                 Reset
               </button>
             </div>
           </form>
         </div>
       </div>
-      <div className='mt-10'>
+      <div className='mt-10 mb-7'>
         <h1 className='text-center text-2xl font-bold text-slate-600'>Attendance as per data</h1>
       </div>
       <div className='flex flex-col items-center justify-center gap-2'>
         {
 
-          attendanceArray.map((item, index) => {
+          attendanceArray?.map((item, index) => {
             return (
-              <div className='w-130 bg-blue-100 border border-blue-400 flex justify-around'>
+              <div key={index} className={`w-110 lg:w-150  ${item.absent ? "bg-orange-400" : "bg-blue-300"} py-1.5 shadow font-bold flex justify-around text-sm`}>
                 <p>{item.day}</p>
                 <p>{item.attendence}</p>
                 <p>{item.absent ? "Absent" : "Present"}</p>
               </div>
             )
           })
+          
         }
       </div>
     </section>
