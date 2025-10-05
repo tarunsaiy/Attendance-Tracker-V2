@@ -3,10 +3,14 @@ import Header from '../Components/Header'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import axios from 'axios'
+import ToastNotification from '../Components/ToastNotification';
+import { showToast } from '../Components/ToastNotification';
 import Loading from '../Components/Loading'
 import attendenceCalculator from '../utils/main'
 import { getSundays } from '../utils/utils'
+import { useNavigate } from 'react-router-dom'
 const Home = () => {
+  const navigate = useNavigate()
   const [data, setData] = useState({
     present: '',
     held: '',
@@ -96,7 +100,12 @@ const Home = () => {
         total_percentage: response.data.total_info?.total_percentage || ''
       }));
     } catch (error) {
-      console.error('Error fetching attendance:', error);
+      
+      navigate('/', { 
+        state : {
+          error : true
+        }
+      })
     }
     finally {
       setLoading(false);
@@ -113,7 +122,7 @@ const Home = () => {
 
   return (
     <section>
-
+      <ToastNotification />
       <Header />
       {
         loading ? (

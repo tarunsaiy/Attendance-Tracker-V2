@@ -1,7 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../Components/Header'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import ToastNotification, { showToast } from '../Components/ToastNotification';
+import { toast } from 'react-toastify';
+
 const Login = () => {
+  const location = useLocation()
+  const {error} = location.state || {}
+  
   const navigate = useNavigate();
   const [data, setData] = useState({
     redgNo : localStorage.getItem("redgNo") || "",
@@ -30,8 +36,14 @@ const Login = () => {
       password : ""
     })
   }
+  useEffect(() => {
+  if (error) {
+    showToast('Invalid Credentials');
+  }
+}, [error]);
   return (
     <section>
+      <ToastNotification/>
       <Header />
       <div className='top-0 bottom-0 left-0 right-0 flex justify-center items-end h-105'>
         <div className='border border-slate-300 rounded w-85'>
