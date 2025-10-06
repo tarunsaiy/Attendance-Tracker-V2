@@ -9,6 +9,7 @@ import Loading from '../Components/Loading'
 import attendenceCalculator from '../utils/main'
 import { getSundays } from '../utils/utils'
 import { useNavigate } from 'react-router-dom'
+import getAttendanceCounts from '../utils/helper'
 const Home = () => {
   const navigate = useNavigate()
   const [data, setData] = useState({
@@ -26,6 +27,7 @@ const Home = () => {
   var leavesArray = [];
   var holidaysArray = [];
   const [attendanceArray, setAttendanceArray] = useState([]);
+  const [cnt, setCnt] = useState(0)
 
   const today = new Date();
   const maxDate = new Date();
@@ -70,7 +72,7 @@ const Home = () => {
     e.preventDefault()
     leavesArray = data.leaves.map(d => d.getDate());
     holidaysArray = data.holidays.map(d => d.getDate());
-    const result = attendenceCalculator(holidaysArray, leavesArray, 28, data.present, data.held, today.getDate(), sundayArray, 7)
+    const result = attendenceCalculator(holidaysArray, leavesArray, 28, data.present - cnt, data.held - cnt, today.getDate(), sundayArray, 7)
     setAttendanceArray(result)
   }
   const handleReset = () => {
@@ -92,6 +94,7 @@ const Home = () => {
       setLoading(true);
       const response = await axios.get(url);
       setAttendanceData(response.data);
+      console.log(data)
       setData(prev => ({
         ...prev,
         present: response.data.total_info?.total_attended || '',
@@ -99,11 +102,13 @@ const Home = () => {
         hours_can_skip: response.data.total_info?.hours_can_skip || '',
         total_percentage: response.data.total_info?.total_percentage || ''
       }));
+      const result = getAttendanceCounts(response.data)
+      setCnt(result.totalClasses);
     } catch (error) {
-      
-      navigate('/', { 
-        state : {
-          error : true
+
+      navigate('/', {
+        state: {
+          error: true
         }
       })
     }
@@ -111,7 +116,7 @@ const Home = () => {
       setLoading(false);
     }
   }
- 
+
 
   useEffect(() => {
     fetchAttendance();
@@ -243,13 +248,13 @@ const Home = () => {
           attendanceArray?.map((item, index) => {
             return (
               <div key={index} className={`w-110 lg:w-150  ${item.absent ? "bg-orange-400" : "bg-blue-300"} py-1.5 shadow font-bold flex justify-around text-sm`}>
-                <p>{item.day}</p>
+                <p>{item.day} th</p>
                 <p>{item.attendence}</p>
                 <p>{item.absent ? "Absent" : "Present"}</p>
               </div>
             )
           })
-          
+
         }
       </div>
     </section>
