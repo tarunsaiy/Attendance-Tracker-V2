@@ -1,6 +1,15 @@
 function getAttendanceCounts(data) {
   const summary = data.attendance_summary;
-
+  const today = new Date().toLocaleDateString();
+  const lastDate = localStorage.getItem("lastDate");
+  if (lastDate != today) {
+    localStorage.setItem("lastDate", today);
+    return {
+      totalPresent: 0,
+      totalAbsent: 0,
+      totalClasses: 0
+    };
+  }
   // ✅ If attendance not posted
   if (
     summary.length === 1 &&
@@ -30,8 +39,6 @@ function getAttendanceCounts(data) {
   const totalClasses = totalPresent + totalAbsent;
 
   return {
-    totalPresent,
-    totalAbsent,
     totalClasses
   };
 }
