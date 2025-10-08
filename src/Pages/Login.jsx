@@ -38,7 +38,7 @@ const Login = () => {
   }
   useEffect(() => {
   if (error) {
-    showToast("NetworkError or Invaild Credentials");
+    showToast("Server under maintanance, wait for couple of minutes");
   }
 }, [error]);
   return (
