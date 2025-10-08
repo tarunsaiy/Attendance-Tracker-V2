@@ -105,7 +105,6 @@ const Home = () => {
     setAttendanceArray([])
     setTempCnt(0);
     setSelectedPeriods([]);
-    setCnt(0);
     setShowLeaveCalendar(false);
     setShowHolidayCalendar(false);
   }
