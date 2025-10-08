@@ -9,7 +9,7 @@ const Header = () => {
     navigate('/')
   }
   return (
-    <section className='flex items-center lg:justify-center lg:gap-2 bg-gradient-to-r px-2 py-3 bg-[#1a0f20] relative '>
+    <section className='flex items-center lg:justify-center lg:gap-2 bg-gradient-to-r px-2 py-3 bg-[#110a15] relative '>
       <div className='w-13 h-13 sm:w-10 sm:h-10'>
         <img src={logo} alt="logo" />
       </div>
