@@ -26,6 +26,7 @@ const Home = () => {
   })
 
   const [loading, setLoading] = useState(false)
+  const [tempCnt, setTempCnt] = useState(0);
   const [attendanceData, setAttendanceData] = useState()
   const [showLeaveCalendar, setShowLeaveCalendar] = useState(false)
   const [showHolidayCalendar, setShowHolidayCalendar] = useState(false)
@@ -40,7 +41,7 @@ const Home = () => {
   maxDate.setMonth(maxDate.getMonth() + 1);
   const sundays = getSundays(today);
   const sundayArray = sundays.map(sun => sun.getDate());
-
+  const emptyArray = new Array(7).fill(null);
   const handleOnChange = (e) => {
     const { name, value } = e.target
     setData(prev => ({
@@ -124,8 +125,8 @@ const Home = () => {
     try {
       const response = await axios.get(url1);
       const result = getAttendanceCounts(response.data)
-      setCnt(result.totalClasses);
-      console.log(result.totalClasses)
+      setCnt(result);
+      console.log(result)
       const todayData = getAttendanceTodayArray(response.data);
       setTodayPeriodsPosted(todayData);
     }
@@ -133,6 +134,7 @@ const Home = () => {
       showToast(error.message)
     }
   }
+ 
 
   useEffect(() => {
     fetchAttendance();
@@ -229,6 +231,22 @@ const Home = () => {
                 ))}
               </div>
             </div>
+
+            {/* <div>
+              <h1 className='text-center font-bold m-2'>Select period to bunk today</h1>
+              <div className='flex justify-evenly flex-wrap'>{
+                emptyArray.map((item, index) => {
+                  return (
+                    <button disabled={cnt >= index + 1} key={index} onClick={() => setTempCnt((prev) => prev + 1)} className={`bg-pink-500 text-slate-200 w-6 h-6 rounded flex justify-center items-center font-semibold
+    ${cnt >= index + 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+  `}>{index + 1}</button>
+                  )
+                }
+                )}
+
+              </div>
+            </div> */}
+
             <div className='grid grid-cols-2 gap-2'>
               <label className='font-semibold text-sm'>Leave dates</label>
               <button type='button' onClick={() => setShowLeaveCalendar(!showLeaveCalendar)} className='border bg-gray-800 border-gray-50 cursor-pointer rounded py-1 font-semibold text-sm w-25'>{
