@@ -50,6 +50,6 @@ export function absentChecker(leaves, date) {
 
 export function attendencePerform(periodsPresent, totalPeriods) {
     let attendance = (periodsPresent / totalPeriods) * 100;
-    return Math.floor(attendance * 100) / 100;
+    return Number(attendance.toFixed(2));
 }
 

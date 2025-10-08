@@ -42,6 +42,18 @@ const Home = () => {
   const sundays = getSundays(today);
   const sundayArray = sundays.map(sun => sun.getDate());
   const emptyArray = new Array(7).fill(null);
+  const [selectedPeriods, setSelectedPeriods] = useState([]);
+
+  const handleTempClick = (index) => {
+    setSelectedPeriods(prev => {
+      if (prev.includes(index)) {
+        return prev.filter(i => i !== index); // unselect
+      } else {
+        return [...prev, index]; // select
+      }
+    });
+  };
+
   const handleOnChange = (e) => {
     const { name, value } = e.target
     setData(prev => ({
@@ -79,9 +91,10 @@ const Home = () => {
     e.preventDefault()
     leavesArray = data.leaves.map(d => d.getDate());
     holidaysArray = data.holidays.map(d => d.getDate());
-    const result = attendenceCalculator(holidaysArray, leavesArray, 28, data.present - cnt, data.held - cnt, today.getDate(), sundayArray, 7)
+    const result = attendenceCalculator(holidaysArray, leavesArray, 28, data.present - (tempCnt + cnt), data.held - cnt, today.getDate(), sundayArray, 7)
     setAttendanceArray(result)
-    console.log(cnt)
+    
+    console.log(tempCnt)
   }
   const handleReset = () => {
     setData(prev => ({
@@ -90,26 +103,37 @@ const Home = () => {
       holidays: []
     }));
     setAttendanceArray([])
+    setTempCnt(0);
+    setSelectedPeriods([]);
+    setCnt(0);
+    setShowLeaveCalendar(false);
+    setShowHolidayCalendar(false);
   }
 
   const redgNo = localStorage.getItem("redgNo");
   const password = localStorage.getItem("password");
   const url1 = `https://attendance-4dtj.onrender.com/api/attendance?student_id=${redgNo}&password=${password}`
-  const url2 = `https://vignanattendancescraping.onrender.com/attendance?regno=${redgNo}&password=${password}`
+  // const url2 = `https://vignanattendancescraping.onrender.com/attendance?regno=${redgNo}&password=${password}`
 
   const fetchAttendance = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(url2);
-      const totals = getAttendanceTotals(response.data)
+      const response = await axios.get(url1);
+      // const totals = getAttendanceTotals(response.data)
+      setAttendanceData(response.data)
       setData(prev => ({
         ...prev,
-        present: totals.attended || '',
-        held: totals.held || '',
-        total_percentage: attendencePerform(totals.attended, totals.held) || ''
+        present: response.data.total_info?.total_attended || '',
+        held: response.data.total_info?.total_held || '',
+        hours_can_skip: response.data.total_info?.hours_can_skip || '',
+        total_percentage: response.data.total_info?.total_percentage || ''
       }));
-      const temp = attendanceTarget(totals.attended, totals.held);
-      setSkip(temp);
+      const result = getAttendanceCounts(response.data)
+      setCnt(result)
+      console.log(result)
+      const todayData = getAttendanceTodayArray(response.data);
+      setTodayPeriodsPosted(todayData);
+
     } catch (error) {
       navigate('/', {
         state: {
@@ -121,25 +145,16 @@ const Home = () => {
       setLoading(false);
     }
   }
-  const fetchPosted = async () => {
-    try {
-      const response = await axios.get(url1);
-      const result = getAttendanceCounts(response.data)
-      setCnt(result);
-      console.log(result)
-      const todayData = getAttendanceTodayArray(response.data);
-      setTodayPeriodsPosted(todayData);
-    }
-    catch (error) {
-      showToast(error.message)
-    }
-  }
- 
+
+
 
   useEffect(() => {
     fetchAttendance();
-    fetchPosted();
+    setSelectedPeriods([]);
   }, [redgNo, password])
+  useEffect(() => {
+    setTempCnt(selectedPeriods.length);
+  }, [selectedPeriods])
 
 
 
@@ -162,11 +177,11 @@ const Home = () => {
                 data.total_percentage >= 75 ? (
                   <div className='flex flex-col items-center justify-center px-4 w-40'>
                     <div>Periods can skip</div>
-                    <div>{skip?.canDecrease}</div>
+                    <div>{data.hours_can_skip}</div>
                   </div>) : (
                   <div className='flex flex-col items-center justify-center px-4 w-40'>
                     <div>Periods to attend</div>
-                    <div>{skip?.neededToReach}</div>
+                    <div>{data.hours_can_skip}</div>
                   </div>
                 )
               }
@@ -232,20 +247,32 @@ const Home = () => {
               </div>
             </div>
 
-            {/* <div>
+            <div>
               <h1 className='text-center font-bold m-2'>Select period to bunk today</h1>
-              <div className='flex justify-evenly flex-wrap'>{
-                emptyArray.map((item, index) => {
-                  return (
-                    <button disabled={cnt >= index + 1} key={index} onClick={() => setTempCnt((prev) => prev + 1)} className={`bg-pink-500 text-slate-200 w-6 h-6 rounded flex justify-center items-center font-semibold
-    ${cnt >= index + 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-  `}>{index + 1}</button>
-                  )
-                }
-                )}
+              <div className='flex justify-evenly flex-wrap'>
+                {emptyArray.map((_, index) => {
+                  const isSelected = selectedPeriods.includes(index);
+                  const isDisabled = cnt >= index + 1;
 
+                  return (
+                    <button
+                      type='button'
+                      key={index}
+                      disabled={isDisabled}
+                      onClick={() => handleTempClick(index)}
+                      className={`
+            ${isSelected ? 'bg-blue-400' : 'bg-pink-500'} 
+            text-slate-200 w-6 h-6 rounded flex justify-center items-center font-semibold 
+            ${isDisabled ? 'opacity-20 cursor-not-allowed' : 'cursor-pointer'}
+          `}
+                    >
+                      {index + 1}
+                    </button>
+                  );
+                })}
               </div>
-            </div> */}
+            </div>
+
 
             <div className='grid grid-cols-2 gap-2'>
               <label className='font-semibold text-sm'>Leave dates</label>
@@ -318,7 +345,7 @@ const Home = () => {
 
           attendanceArray?.map((item, index) => {
             return (
-              <div key={index} className={`w-110 lg:w-150  ${item.absent ? "" : "bg-[rgba(10, 44, 17, 0.517)]"} ${item.absent ? "text-red-200" : "text-green-200"}  ${item.absent ? "border border-red-600" : "border border-green-400"} py-1.5 shadow font-bold flex justify-around text-sm`}>
+              <div key={index} className={`w-70 sm:w-150  ${item.absent ? "" : "bg-[rgba(10, 44, 17, 0.517)]"} ${item.absent ? "text-red-200" : "text-green-200"}  ${item.absent ? "border border-red-600" : "border border-green-400"} py-1.5 shadow font-bold flex justify-around text-sm`}>
                 <p>{item.day} th</p>
                 <p>{item.attendence}</p>
                 <p>{item.absent ? "Absent" : "Present"}</p>
