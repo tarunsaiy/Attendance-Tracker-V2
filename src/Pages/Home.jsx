@@ -13,6 +13,7 @@ import getAttendanceCounts from '../utils/helper'
 import FooterComponent from '../Components/FooterComponent'
 import getAttendanceTotals from '../utils/getAttendanceTotals'
 import attendanceTarget from '../utils/AttendanceTarget'
+import { getAttendanceTodayArray } from '../utils/attendanceTodayArray'
 const Home = () => {
   const navigate = useNavigate()
   const [data, setData] = useState({
@@ -28,6 +29,7 @@ const Home = () => {
   const [attendanceData, setAttendanceData] = useState()
   const [showLeaveCalendar, setShowLeaveCalendar] = useState(false)
   const [showHolidayCalendar, setShowHolidayCalendar] = useState(false)
+  const [todayPeriodsPosted, setTodayPeriodsPosted] = useState(null)
   var leavesArray = [];
   var holidaysArray = [];
   const [attendanceArray, setAttendanceArray] = useState([]);
@@ -97,7 +99,7 @@ const Home = () => {
   const fetchAttendance = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(url2);      
+      const response = await axios.get(url2);
       const totals = getAttendanceTotals(response.data)
       setData(prev => ({
         ...prev,
@@ -106,7 +108,7 @@ const Home = () => {
         total_percentage: attendencePerform(totals.attended, totals.held) || ''
       }));
       const temp = attendanceTarget(totals.attended, totals.held);
-      setSkip(temp);      
+      setSkip(temp);
     } catch (error) {
       navigate('/', {
         state: {
@@ -118,12 +120,14 @@ const Home = () => {
       setLoading(false);
     }
   }
-  const fetchPosted = async() => {
+  const fetchPosted = async () => {
     try {
       const response = await axios.get(url1);
       const result = getAttendanceCounts(response.data)
       setCnt(result.totalClasses);
       console.log(result.totalClasses)
+      const todayData = getAttendanceTodayArray(response.data);
+      setTodayPeriodsPosted(todayData);
     }
     catch (error) {
       showToast(error.message)
@@ -151,7 +155,7 @@ const Home = () => {
         ) : (
           <div className='mt-4 mx-1 flex items-center justify-around'>
             <div className=' bg-purple-950 h-13 min-h-13 max-h-13  rounded py-1  font-bold text-sm '>
-              
+
               {
                 data.total_percentage >= 75 ? (
                   <div className='flex flex-col items-center justify-center px-4 w-40'>
@@ -184,7 +188,7 @@ const Home = () => {
               <input
                 type='number'
                 id='present'
-                
+
                 className='border bg-[#1a0f20] border-purple-900 rounded px-2 py-1  text-sm text-center'
                 name='present'
                 value={data.present}
@@ -210,8 +214,21 @@ const Home = () => {
                 onChange={handleOnChange}
               />
             </div>
-
-
+            <div>
+              <div className='text-center text-xs mb-1'>Today attendance status</div>
+              <div className='flex gap-2 items-center flex-wrap'>
+                {todayPeriodsPosted?.map((item, index) => (
+                  item.message ? (
+                    <p key={index}>{item.message}</p>
+                  ) : (
+                    <div key={index} className={`${item.attendance_today?.trim().toUpperCase() === "A" ? 'bg-red-700' : 'bg-green-700'}  rounded flex gap-1 font-bold px-0.5 text-sm`}>
+                      <span>{item.subject}:</span>
+                      <span>{item.attendance_today}</span>
+                    </div>
+                  )
+                ))}
+              </div>
+            </div>
             <div className='grid grid-cols-2 gap-2'>
               <label className='font-semibold text-sm'>Leave dates</label>
               <button type='button' onClick={() => setShowLeaveCalendar(!showLeaveCalendar)} className='border bg-gray-800 border-gray-50 cursor-pointer rounded py-1 font-semibold text-sm w-25'>{
@@ -221,7 +238,7 @@ const Home = () => {
                 showLeaveCalendar && (
 
                   <Calendar
-                  className={'text-black'}
+                    className={'text-black'}
                     onClickDay={handleLeaveDayClick}
                     value={null}
                     tileClassName={({ date }) =>
@@ -293,7 +310,7 @@ const Home = () => {
 
         }
       </div>
-      <FooterComponent/>
+      <FooterComponent />
     </section>
 
   )
