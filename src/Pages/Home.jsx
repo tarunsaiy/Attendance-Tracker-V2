@@ -140,7 +140,7 @@ const Home = () => {
 
   return (
 
-    <section className='bg-[#0f1720] text-slate-200 min-h-screen'>
+    <section className='bg-[#1a0f20] text-slate-200 min-h-screen'>
       <ToastNotification />
       <Header />
       {
@@ -150,22 +150,22 @@ const Home = () => {
           </div>
         ) : (
           <div className='mt-4 mx-1 flex items-center justify-around'>
-            <div className=' bg-green-400 text-green-900 h-13 min-h-13 max-h-13  rounded py-1  font-bold text-sm '>
+            <div className=' bg-purple-950 h-13 min-h-13 max-h-13  rounded py-1  font-bold text-sm '>
               
               {
                 data.total_percentage >= 75 ? (
-                  <div className='flex flex-col items-center justify-center px-4 w-45'>
+                  <div className='flex flex-col items-center justify-center px-4 w-40'>
                     <div>Periods can skip</div>
                     <div>{skip?.canDecrease}</div>
                   </div>) : (
-                  <div className='flex flex-col items-center justify-center px-4 w-45'>
+                  <div className='flex flex-col items-center justify-center px-4 w-40'>
                     <div>Periods to attend</div>
                     <div>{skip?.neededToReach}</div>
                   </div>
                 )
               }
             </div>
-            <div className=' bg-blue-700 h-13 min-h-13 max-h-13 rounded py-1 font-semibold text-sm w-45 rounded  font-semibold text-sm flex flex-col items-center justify-center px-4'>
+            <div className=' bg-purple-950 h-13 min-h-13 max-h-13 rounded py-1 font-semibold text-sm w-40  flex flex-col items-center justify-center'>
               <div>Present attendance</div>
               <div>{data.total_percentage}</div>
             </div>
@@ -174,9 +174,9 @@ const Home = () => {
       }
       <div className='top-0 bottom-0 left-0 right-0 flex justify-center mt-10'>
 
-        <div className='border border-slate-800 rounded w-105'>
-          <form className='grid p-5 rounded gap-6 bg-[#111214]' onSubmit={handleSubmit}>
-            <div className='font-semibold text-2xl text-blue-300'>Hi, {localStorage.getItem("redgNo")}</div>
+        <div className='border border-purple-950 shadow rounded-3xl w-105'>
+          <form className='grid p-5 rounded-3xl gap-6 bg-[#111214]' onSubmit={handleSubmit}>
+            <div className='font-semibold text-2xl text-slate-200'>Hi, {localStorage.getItem("redgNo")}</div>
             <div className='grid grid-cols-2 gap-2'>
               <label htmlFor="present" className='font-semibold  text-sm'>
                 Number of periods attended
@@ -185,7 +185,7 @@ const Home = () => {
                 type='number'
                 id='present'
                 
-                className='border bg-gray-800 border-blue-300 rounded px-2 py-1  text-sm text-center'
+                className='border bg-[#1a0f20] border-purple-900 rounded px-2 py-1  text-sm text-center'
                 name='present'
                 value={data.present}
                 readOnly
@@ -203,7 +203,7 @@ const Home = () => {
                 type='number'
                 id='held'
                 readOnly
-                className='border bg-gray-800 border-blue-300 text-center rounded px-2 py-1  text-sm'
+                className='border bg-[#1a0f20] border-purple-900 text-center rounded px-2 py-1  text-sm'
                 name='held'
                 value={data.held}
                 required
@@ -265,10 +265,10 @@ const Home = () => {
             </div>
 
             <div className='grid grid-cols-2 gap-3'>
-              <button type='submit' className='cursor-pointer bg-orange-500 text-slate-900 rounded py-2 font-semibold text-sm mt-4 hover:bg-orange-500'>
+              <button type='submit' className='cursor-pointer bg-purple-950  rounded py-2 font-semibold text-sm mt-4 '>
                 Submit
               </button>
-              <button type='button' onClick={handleReset} className='cursor-pointer bg-orange-500 text-slate-900 rounded py-2 font-semibold text-sm mt-4 hover:bg-orange-500'>
+              <button type='button' onClick={handleReset} className='cursor-pointer bg-purple-950 rounded py-2 font-semibold text-sm mt-4 '>
                 Reset
               </button>
             </div>
