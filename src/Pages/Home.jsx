@@ -170,7 +170,7 @@ const Home = () => {
           </div>
         ) : (
           <div className='mt-4 mx-1 flex items-center justify-around'>
-            <div className=' bg-purple-950 h-13 min-h-13 max-h-13  rounded py-1  font-bold text-sm '>
+            <div className=' bg-pink-800 h-13 min-h-13 max-h-13  rounded py-1  font-bold text-sm '>
 
               {
                 data.total_percentage >= 75 ? (

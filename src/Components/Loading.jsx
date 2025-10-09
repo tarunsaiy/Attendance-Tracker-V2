@@ -26,7 +26,7 @@ const Loading = () => {
 
         .loader::after {
           transform: rotate3d(90, 90, 0, 180deg);
-          border-color: #ff3800;
+          border-color: #ff3d00;
         }
 
         @keyframes rotate {
