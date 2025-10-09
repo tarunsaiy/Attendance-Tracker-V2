@@ -20,7 +20,7 @@ const Header = () => {
       {
         (location.pathname != '/') && (
 
-          <button type='button' onClick={handleClick} className='cursor-pointer  bg-purple-600 px-3 font-semibold text-sm rounded py-2 absolute top-5 right-5'>Logout</button>
+          <button type='button' onClick={handleClick} className='cursor-pointer  bg-purple-600 px-3 font-semibold text-sm rounded-2xl py-2 absolute top-7 sm:top-4 right-5'>Logout</button>
         )
       }
     </section>

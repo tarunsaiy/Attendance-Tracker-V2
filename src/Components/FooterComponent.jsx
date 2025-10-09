@@ -8,8 +8,8 @@ const FooterComponent = () => {
           <p>All Study Materials</p>
           <Link to="https://btechvault.vercel.app">click</Link>
         </div> */}
-        <Link to='https://github.com/tarunsaiy' className='text-xs font-semibold'>github</Link>
-        <p className='text-xs font-bold'>#Salaar #Shouryanga</p>
+        <Link to='https://github.com/tarunsaiy' className='text-xs font-semibold  text-pink-400/40'>github</Link>
+        <p className='text-xs font-bold text-pink-400/40'>#Salaar #Shouryanga</p>
       </div>
     </section>
   )
