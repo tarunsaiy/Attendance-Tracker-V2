@@ -129,7 +129,7 @@ const Home = () => {
       }));
       const result = getAttendanceCounts(response.data)
       setCnt(result)
-      console.log(result)
+      console.log("cnt" +result)
       const todayData = getAttendanceTodayArray(response.data);
       setTodayPeriodsPosted(todayData);
 

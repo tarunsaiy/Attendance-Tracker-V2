@@ -3,7 +3,7 @@ function getAttendanceCounts(data) {
 
   // If no summary or attendance not posted
   if (!summary || summary.length === 0 || (summary.length === 1 && summary[0].message)) {
-    return { totalClasses: 0 };
+    return 0 ;
   }
 
   let totalClasses = 0;
@@ -13,7 +13,7 @@ function getAttendanceCounts(data) {
     totalClasses += record.length; // Count all periods for today
   });
 
-  return totalClasses ;
+  return totalClasses;
 }
 
 export default getAttendanceCounts;
