@@ -22,6 +22,7 @@ const Home = () => {
     leaves: [],
     holidays: [],
     hours_can_skip: "",
+    hours_needed : "",
     total_percentage: ""
   })
 
@@ -119,12 +120,14 @@ const Home = () => {
       setLoading(true);
       const response = await axios.get(url1);
       // const totals = getAttendanceTotals(response.data)
+      console.log(response)
       setAttendanceData(response.data)
       setData(prev => ({
         ...prev,
         present: response.data.total_info?.total_attended || '',
         held: response.data.total_info?.total_held || '',
         hours_can_skip: response.data.total_info?.hours_can_skip || '',
+        hours_needed: response.data.total_info?.additional_hours_needed || '',
         total_percentage: response.data.total_info?.total_percentage || ''
       }));
       const result = getAttendanceCounts(response.data)
@@ -180,7 +183,7 @@ const Home = () => {
                   </div>) : (
                   <div className='flex flex-col items-center justify-center px-4 w-40'>
                     <div>Periods to attend</div>
-                    <div>{data.hours_can_skip}</div>
+                    <div>{data.hours_needed}</div>
                   </div>
                 )
               }
