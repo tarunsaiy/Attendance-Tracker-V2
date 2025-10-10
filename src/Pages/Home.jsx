@@ -119,7 +119,9 @@ const Home = () => {
   const fetchAttendance = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(url1);
+      const response = await axios.get(url1, {
+        headers: { 'Cache-Control': 'no-cache' }
+      });
       // const totals = getAttendanceTotals(response.data)
       const now = new Date().toLocaleString('en-IN', {
         day: '2-digit',
