@@ -202,35 +202,45 @@ const Home = () => {
     <section className='bg-[#1a0f20] text-slate-200 min-h-screen'>
       <ToastNotification />
       <Header />
-      {
-        loading ? (
-          <div className='pt-6'>
-            <Loading />
-          </div>
-        ) : (
+      
           <div className='mt-4 mx-1 flex items-center justify-around'>
             <div className=' bg-pink-800 h-13 min-h-13 max-h-13  rounded py-1  font-bold text-sm '>
 
               {
-                data.total_percentage >= 75 ? (
-                  <div className='flex flex-col items-center justify-center px-4 w-40'>
-                    <div>Periods can skip</div>
-                    <div>{data.hours_can_skip}</div>
-                  </div>) : (
-                  <div className='flex flex-col items-center justify-center px-4 w-40'>
-                    <div>Periods to attend</div>
-                    <div>{data.hours_needed}</div>
-                  </div>
-                )
-              }
+  data.total_percentage >= 75 ? (
+    <div className='flex flex-col items-center justify-center px-4 w-40'>
+      <div>Periods can skip</div>
+      <div>
+        {data.hours_can_skip
+          ? data.hours_can_skip
+          : JSON.parse(localStorage.getItem("latestAttendanceData"))?.total_info?.hours_can_skip || 0}
+      </div>
+    </div>
+  ) : (
+    <div className='flex flex-col items-center justify-center px-4 w-40'>
+      <div>Periods to attend</div>
+      <div>
+        {data.hours_needed
+          ? data.hours_needed
+          : JSON.parse(localStorage.getItem("latestAttendanceData"))?.total_info?.additional_hours_needed || 0}
+      </div>
+    </div>
+  )
+}
+
             </div>
-            <div className=' bg-purple-950 h-13 min-h-13 max-h-13 rounded py-1 font-semibold text-sm w-40  flex flex-col items-center justify-center'>
-              <div>Present attendance</div>
-              <div>{data.total_percentage}</div>
-            </div>
+            <div className='bg-purple-950 h-13 min-h-13 max-h-13 rounded py-1 font-semibold text-sm w-40 flex flex-col items-center justify-center'>
+  <div>Present attendance</div>
+  <div>
+    {data.total_percentage
+      ? data.total_percentage
+      : JSON.parse(localStorage.getItem("latestAttendanceData"))?.total_info?.total_percentage || 0}
+  </div>
+</div>
+
           </div>
-        )
-      }
+        
+      
       <div className='top-0 bottom-0 left-0 right-0 flex justify-center mt-10'>
 
         <div className='border border-purple-950 shadow rounded-3xl w-105'>
