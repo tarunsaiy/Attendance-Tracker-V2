@@ -113,7 +113,7 @@ const Home = () => {
 
   const redgNo = localStorage.getItem("redgNo");
   const password = localStorage.getItem("password");
-  const url1 = `api/dev/attendance?student_id=${redgNo}&password=${password}`
+  const url1 = `https://attendance-4dtj.onrender.com/api/attendance?student_id=${redgNo}&password=${password}`
   // const url2 = `https://vignanattendancescraping.onrender.com/attendance?regno=${redgNo}&password=${password}`
 
   const fetchAttendance = async () => {
