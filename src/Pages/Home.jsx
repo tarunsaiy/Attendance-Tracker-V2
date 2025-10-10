@@ -33,6 +33,7 @@ const Home = () => {
   const [showHolidayCalendar, setShowHolidayCalendar] = useState(false)
   const [todayPeriodsPosted, setTodayPeriodsPosted] = useState(null)
   var leavesArray = [];
+  const [lastUpdated, setLastUpdated] = useState(null)
   var holidaysArray = [];
   const [attendanceArray, setAttendanceArray] = useState([]);
   const [cnt, setCnt] = useState(0)
@@ -112,7 +113,7 @@ const Home = () => {
 
   const redgNo = localStorage.getItem("redgNo");
   const password = localStorage.getItem("password");
-  const url1 = `https://attendance-4dtj.onrender.com/api/attendance?student_id=${redgNo}&password=${password}`
+  const url1 = `api/dev/attendance?student_id=${redgNo}&password=${password}`
   // const url2 = `https://vignanattendancescraping.onrender.com/attendance?regno=${redgNo}&password=${password}`
 
   const fetchAttendance = async () => {
@@ -120,7 +121,17 @@ const Home = () => {
       setLoading(true);
       const response = await axios.get(url1);
       // const totals = getAttendanceTotals(response.data)
-      console.log(response)
+      const now = new Date().toLocaleString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      })
+
+      setLastUpdated(now)
       setAttendanceData(response.data)
       setData(prev => ({
         ...prev,
@@ -327,12 +338,16 @@ const Home = () => {
               }
 
             </div>
-
+              <div>
+                <button type='button' onClick={fetchAttendance} className='cursor-pointer bg-pink-800 rounded py-2 font-semibold text-sm w-full '>Fetch Attendance</button>
+                <p className='text-xs ml-0 mt-1'>Last updated: {lastUpdated}</p>
+              </div>
+              
             <div className='grid grid-cols-2 gap-3'>
-              <button type='submit' className='cursor-pointer bg-purple-950  rounded py-2 font-semibold text-sm mt-4 '>
+              <button type='submit' className='cursor-pointer bg-purple-950  rounded py-2 font-semibold text-sm mt- '>
                 Submit
               </button>
-              <button type='button' onClick={handleReset} className='cursor-pointer bg-purple-950 rounded py-2 font-semibold text-sm mt-4 '>
+              <button type='button' onClick={handleReset} className='cursor-pointer bg-purple-950 rounded py-2 font-semibold text-sm mt- '>
                 Reset
               </button>
             </div>
