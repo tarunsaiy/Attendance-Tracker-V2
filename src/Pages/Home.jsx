@@ -22,10 +22,9 @@ const Home = () => {
     leaves: [],
     holidays: [],
     hours_can_skip: "",
-    hours_needed : "",
+    hours_needed: "",
     total_percentage: ""
   })
-
   const [loading, setLoading] = useState(false)
   const [tempCnt, setTempCnt] = useState(0);
   const [attendanceData, setAttendanceData] = useState()
@@ -95,7 +94,7 @@ const Home = () => {
     holidaysArray = data.holidays.map(d => d.getDate());
     const result = attendenceCalculator(holidaysArray, leavesArray, 28, data.present - (tempCnt + cnt), data.held - cnt, today.getDate(), sundayArray, 7)
     setAttendanceArray(result)
-    
+
     console.log(tempCnt)
   }
   const handleReset = () => {
@@ -119,9 +118,10 @@ const Home = () => {
   const fetchAttendance = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(url1, {
-        headers: { 'Cache-Control': 'no-cache' }
-      });
+
+      const response = await axios.get(url1);
+      localStorage.setItem("latestAttendanceData", JSON.stringify(response.data));
+
       // const totals = getAttendanceTotals(response.data)
       const now = new Date().toLocaleString('en-IN', {
         day: '2-digit',
@@ -132,7 +132,7 @@ const Home = () => {
         second: '2-digit',
         hour12: true,
       })
-
+      localStorage.setItem("lastFetchTime", now);
       setLastUpdated(now)
       setAttendanceData(response.data)
       setData(prev => ({
@@ -144,17 +144,40 @@ const Home = () => {
         total_percentage: response.data.total_info?.total_percentage || ''
       }));
       const result = getAttendanceCounts(response.data)
+
       setCnt(result)
-      console.log("cnt" +result)
+      console.log("cnt" + result)
       const todayData = getAttendanceTodayArray(response.data);
       setTodayPeriodsPosted(todayData);
 
     } catch (error) {
-      navigate('/', {
-        state: {
-          error: true,
-        }
-      })
+      const storedData = localStorage.getItem("latestAttendanceData");
+      const lastFetchTime = localStorage.getItem("lastFetchTime");
+      if (storedData && lastFetchTime) {
+
+        const parsedData = JSON.parse(storedData);
+        setLastUpdated(lastFetchTime);
+        setAttendanceData(parsedData);
+        setData(prev => ({
+          ...prev,
+          present: parsedData.total_info?.total_attended || '',
+          held: parsedData.total_info?.total_held || '',
+          hours_can_skip: parsedData.total_info?.hours_can_skip || '',
+          hours_needed: parsedData.total_info?.additional_hours_needed || '',
+          total_percentage: parsedData.total_info?.total_percentage || ''
+        }));
+
+        const result = getAttendanceCounts(parsedData);
+        setCnt(result);
+
+        const todayData = getAttendanceTodayArray(parsedData);
+        setTodayPeriodsPosted(todayData);
+
+        showToast("Poor internet connection");
+      } else {
+        showToast("Invalid details");
+      }
+
     }
     finally {
       setLoading(false);
@@ -166,7 +189,7 @@ const Home = () => {
   useEffect(() => {
     fetchAttendance();
     setSelectedPeriods([]);
-  }, [redgNo, password])
+  }, [])
   useEffect(() => {
     setTempCnt(selectedPeriods.length);
   }, [selectedPeriods])
@@ -340,11 +363,19 @@ const Home = () => {
               }
 
             </div>
-              <div>
-                <button type='button' onClick={fetchAttendance} className='cursor-pointer bg-pink-800 rounded py-2 font-semibold text-sm w-full '>Fetch Attendance</button>
-                <p className='text-xs ml-0 mt-1'>Last updated: {lastUpdated}</p>
-              </div>
-              
+            <div>
+              <button type='button' onClick={fetchAttendance} className={`relative cursor-pointer bg-pink-800 rounded py-2 font-semibold text-sm w-full flex items-center justify-center overflow-hidden`}
+                disabled={loading}>
+                {loading && (
+                  <span className="absolute left-0 top-0 h-full w-full bg-gray-600 animate-pulse opacity-90"></span>
+                )}
+                <span className={`relative ${loading ? " " : "text-white"}`}>
+                  {loading ? "Fetching..." : "Fetch Attendance"}
+                </span>
+              </button>
+              <p className='text-xs ml-0 mt-1'>Last updated: {lastUpdated}</p>
+            </div>
+
             <div className='grid grid-cols-2 gap-3'>
               <button type='submit' className='cursor-pointer bg-purple-950  rounded py-2 font-semibold text-sm mt- '>
                 Submit
